@@ -15,12 +15,12 @@
 
     // key: language, value: text used to determine Suggestion post.
     const blockSuggestions = {
-        cs: "Návrhy pro vás"
+        cs: "^Návrhy pro vás$"
     };
 
     // key: language, value: text used to determine Sponsored post.
     const blockSponsored = {
-        cs: "ponzorováno" // Sponzorováno - missing first letter is not a typo, it is a facebook feature.
+        cs: "ponzorováno$" // Sponzorováno - missing first letter is not a typo, it is a facebook feature.
     };
 
     const blockSuggestionRegExp = new RegExp(blockSuggestions[language]);
@@ -36,7 +36,7 @@
                 .filter(a => !a.attributes.style)
                 .map(a => a.textContent)
                 .join("")
-                .match(`^${blockSponsoredRegExp}\$`)
+                .match(blockSponsoredRegExp)
             );
 
             if (adSuggestions.length + adSponsored.length > 0) {
