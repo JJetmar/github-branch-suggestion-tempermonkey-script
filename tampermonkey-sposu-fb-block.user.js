@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Facebook - suggestions and sponsored posts blocker.
 // @namespace    https://github.com/JJetmar/sposu-fb-block
-// @version      1.0
+// @version      1.0.1
 // @description  blocks suggestions and sponsored links on Facebook
 // @author       JJetmar
 // @match        https://www.facebook.com/
