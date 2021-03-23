@@ -36,7 +36,7 @@
                 .filter(a => !a.attributes.style)
                 .map(a => a.textContent)
                 .join("")
-                .match(`^${blockSponsoredRegExp}$`)
+                .match(`^${blockSponsoredRegExp}\$`)
             );
 
             if (adSuggestions.length + adSponsored.length > 0) {
