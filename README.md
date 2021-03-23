@@ -15,7 +15,7 @@ Currently only czech language (cs) is supported. Feel free to send pull request 
 	* Dolphin - install [Tampermonkey](https://tampermonkey.net/?ext=dhdg&browser=dolphin).
 	* UC Browser - install [Tampermonkey](https://tampermonkey.net/?ext=dhdg&browser=ucweb).
 
-2.  Click here for [installation of user script](https://raw.githubusercontent.com/JJetmar/tampermonkey-shivtr-extend/master/tampermonkey-sposu-fb-block.user.js).
+2.  Click here for [installation of user script](https://github.com/JJetmar/sposu-fb-block/raw/main/tampermonkey-sposu-fb-block.user.js).
 
 3.  Go to any Shivtr hosted website and navigate to event detail. Mention two new buttons.
 
