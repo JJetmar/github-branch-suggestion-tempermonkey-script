@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Facebook - suggestions and sponsored posts blocker.
 // @namespace    https://github.com/JJetmar/sposu-fb-block
-// @version      1.0.1
+// @version      1.0.2
 // @description  blocks suggestions and sponsored links on Facebook
 // @author       JJetmar
 // @match        https://www.facebook.com/
@@ -15,12 +15,12 @@
 
     // key: language, value: text used to determine Suggestion post.
     const blockSuggestions = {
-        cs: "^Návrhy pro vás$"
+        cs: "^(Návrhy pro vás|Navrhované události)$"
     };
 
     // key: language, value: text used to determine Sponsored post.
     const blockSponsored = {
-        cs: "ponzorováno$" // Sponzorováno - missing first letter is not a typo, it is a facebook feature.
+        cs: "Sponzorováno" // Sponzorováno - missing first letter is not a typo, it is a facebook feature.
     };
 
     const blockSuggestionRegExp = new RegExp(blockSuggestions[language]);
@@ -28,20 +28,31 @@
 
     setInterval(() => {
         for (const post of document.querySelectorAll("[data-pagelet]:not(.ad-checked)")) {
-            const spans = [...post.querySelectorAll("span")];
+            for (const heading of post.querySelectorAll("h4")) {
+                const spans = [...heading.parentNode.parentNode.parentNode.querySelectorAll("span")];
 
-            let adSuggestions = spans.filter(el => el.textContent.match(blockSuggestionRegExp));
+                // Suggestions
+                let suggestionsRootEl = heading.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.previousElementSibling;
+                if (suggestionsRootEl.textContent.match(blockSuggestions[language])) {
+                    post.remove();
+                    console.log("Deleted Suggestion")
+                    continue;
+                }
 
-            let adSponsored = spans.filter(a => [...a.children]
-                .filter(a => !a.attributes.style)
-                .map(a => a.textContent)
-                .join("")
-                .match(blockSponsoredRegExp)
-            );
+                // Sponsored
+                const sponsoredText = blockSponsored[language];
+                const sponsoredWrapper = heading.parentNode.parentNode.nextSibling;
+                if (sponsoredWrapper) {
+                    let sponsored = heading.parentNode.parentNode.nextSibling.querySelectorAll("a")[0]
+                    .textContent.split("")
+                    .reduce((accumulator, currentValue, currentIndex, sourceArray) => currentValue === sponsoredText[accumulator] ? accumulator + 1 : accumulator, 0) === sponsoredText.length;
 
-            if (adSuggestions.length + adSponsored.length > 0) {
-                post.remove();
-            } else {
+                    if (sponsored) {
+                        post.remove();
+                        console.log("Deleted Sponsored")
+                        continue;
+                    }
+                }
                 post.classList.add("ad-checked");
             }
         }
