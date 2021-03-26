@@ -20,7 +20,7 @@
 
     // key: language, value: text used to determine Sponsored post.
     const blockSponsored = {
-        cs: "Sponzorováno" // Sponzorováno - missing first letter is not a typo, it is a facebook feature.
+        cs: "Sponzorováno"
     };
 
     const blockSuggestionRegExp = new RegExp(blockSuggestions[language]);
