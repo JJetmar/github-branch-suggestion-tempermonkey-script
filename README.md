@@ -17,10 +17,4 @@ Currently only czech language (cs) is supported. Feel free to send pull request 
 
 2.  Click here for [installation of user script](https://github.com/JJetmar/sponsored-suggestions-facebook-block/raw/main/tampermonkey-sposu-fb-block.user.js).
 
-3.  Go to any Shivtr hosted website and navigate to event detail. Mention two new buttons.
-
-## Features
-
-* Adds button for invitation of all members that signed for event via in-game script.
-
-* Allows to generate member structure for addon [Sponsored posts and suggestions Facebook block](https://github.com/JJetmar/sponsored-suggestions-facebook-block).
+3.  Go to Facebook and seek for unwanted posts that should not appear anymore.
