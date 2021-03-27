@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Facebook - suggestions and sponsored posts blocker.
 // @namespace    https://github.com/JJetmar/sposu-fb-block
-// @version      1.0.2
+// @version      1.0.3
 // @description  blocks suggestions and sponsored links on Facebook
 // @author       JJetmar
 // @match        https://www.facebook.com/
@@ -20,7 +20,7 @@
 
     // key: language, value: text used to determine Sponsored post.
     const blockSponsored = {
-        cs: "Sponzorováno"
+        cs: "Sponzorováno" // Sponzorováno - missing first letter is not a typo, it is a facebook feature.
     };
 
     const blockSuggestionRegExp = new RegExp(blockSuggestions[language]);
@@ -32,8 +32,8 @@
                 const spans = [...heading.parentNode.parentNode.parentNode.querySelectorAll("span")];
 
                 // Suggestions
-                let suggestionsRootEl = heading.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.previousElementSibling;
-                if (suggestionsRootEl.textContent.match(blockSuggestions[language])) {
+                const suggestionsRootEl = heading.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.previousElementSibling;
+                if (suggestionsRootEl && suggestionsRootEl.textContent.match(blockSuggestions[language])) {
                     post.remove();
                     console.log("Deleted Suggestion")
                     continue;
@@ -43,7 +43,8 @@
                 const sponsoredText = blockSponsored[language];
                 const sponsoredWrapper = heading.parentNode.parentNode.nextSibling;
                 if (sponsoredWrapper) {
-                    let sponsored = heading.parentNode.parentNode.nextSibling.querySelectorAll("a")[0]
+                    const sponsoredWrapper = heading.parentNode.parentNode.nextSibling.querySelectorAll("a")[0]
+                    const sponsored = sponsoredWrapper
                     .textContent.split("")
                     .reduce((accumulator, currentValue, currentIndex, sourceArray) => currentValue === sponsoredText[accumulator] ? accumulator + 1 : accumulator, 0) === sponsoredText.length;
 
