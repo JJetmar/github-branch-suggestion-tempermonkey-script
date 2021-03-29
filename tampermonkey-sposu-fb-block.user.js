@@ -43,15 +43,17 @@
                 const sponsoredText = blockSponsored[language];
                 const sponsoredWrapper = heading.parentNode.parentNode.nextSibling;
                 if (sponsoredWrapper) {
-                    const sponsoredWrapper = heading.parentNode.parentNode.nextSibling.querySelectorAll("a")[0]
-                    const sponsored = sponsoredWrapper
-                    .textContent.split("")
-                    .reduce((accumulator, currentValue, currentIndex, sourceArray) => currentValue === sponsoredText[accumulator] ? accumulator + 1 : accumulator, 0) === sponsoredText.length;
+                    const sponsoredLink = heading.parentNode.parentNode.nextSibling.querySelectorAll("a")[0]
+                    if (sponsoredLink) {
+                        const sponsored = sponsoredLink
+                        .textContent.split("")
+                        .reduce((accumulator, currentValue, currentIndex, sourceArray) => currentValue === sponsoredText[accumulator] ? accumulator + 1 : accumulator, 0) === sponsoredText.length;
 
-                    if (sponsored) {
-                        post.remove();
-                        console.log("Deleted Sponsored")
-                        continue;
+                        if (sponsored) {
+                            post.remove();
+                            console.log("Deleted Sponsored")
+                            continue;
+                        }
                     }
                 }
                 post.classList.add("ad-checked");
