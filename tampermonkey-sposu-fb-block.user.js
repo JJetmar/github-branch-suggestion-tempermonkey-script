@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Facebook - suggestions and sponsored posts blocker.
 // @namespace    https://github.com/JJetmar/sposu-fb-block
-// @version      1.0.4
+// @version      1.0.5
 // @description  blocks suggestions and sponsored links on Facebook
 // @author       JJetmar
 // @match        https://www.facebook.com/
@@ -43,7 +43,7 @@
                 const sponsoredText = blockSponsored[language];
                 const sponsoredWrapper = heading.parentNode.parentNode.nextSibling;
                 if (sponsoredWrapper) {
-                    const sponsoredLink = heading.parentNode.parentNode.nextSibling.querySelectorAll("a")[0]
+                    const sponsoredLink = sponsoredWrapper;
                     if (sponsoredLink) {
                         const sponsored = sponsoredLink
                         .textContent.split("")
