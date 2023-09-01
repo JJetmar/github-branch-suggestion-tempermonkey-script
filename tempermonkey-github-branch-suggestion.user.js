@@ -13,15 +13,19 @@
 (function() {
     'use strict';
 
-    const issueTitle = $('.js-issue-title').eq(0).text();
-    const formattedIssueName = issueTitle.replace(/[^a-zA-Z\d]+/g, '-').replace(/-/g, '-').replace(/^-+|-+$/g, '').toLocaleLowerCase()
-    const issueNumber = $('.js-issue-title + span').eq(0).text().replace(/[^\d]/g, '');
-
-    const branchName = `fix/${issueNumber}-${formattedIssueName}`
+    let lastBranchName;
 
     setInterval(() => {
-        if ($('#branch-name-suggestion').length === 0) {
+        const issueTitle = $('.js-issue-title').eq(0).text();
+        const formattedIssueName = issueTitle.replace(/[^a-zA-Z\d]+/g, '-').replace(/-/g, '-').replace(/^-+|-+$/g, '').toLocaleLowerCase()
+        const issueNumber = $('.js-issue-title + span').eq(0).text().replace(/[^\d]/g, '');
+
+        const branchName = `fix/${issueNumber}-${formattedIssueName}`
+
+        if (lastBranchName !== branchName) {
+            $('#branch-name-suggestion').remove();
             $('.gh-header-meta').parent().append(`Branch name suggestion: <input type="text" value="${branchName}" id="branch-name-suggestion" size="100">`);
+            lastBranchName = branchName;
         }
     }, 1000)
 })();
