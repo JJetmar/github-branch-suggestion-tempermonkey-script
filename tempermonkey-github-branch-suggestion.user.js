@@ -4,7 +4,7 @@
 // @version      0.1
 // @description  try to take over the world!
 // @author       You
-// @match        https://github.com/*/issues/*
+// @match        https://github.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=github.com
 // @require      https://code.jquery.com/jquery-3.6.3.min.js
 // @grant        none
@@ -22,7 +22,7 @@
 
         const branchName = `fix/${issueNumber}-${formattedIssueName}`
 
-        if (lastBranchName !== branchName) {
+        if (branchName && lastBranchName !== branchName) {
             $('#branch-name-suggestion').remove();
             $('.gh-header-meta').parent().append(`Branch name suggestion: <input type="text" value="${branchName}" id="branch-name-suggestion" size="100">`);
             lastBranchName = branchName;
