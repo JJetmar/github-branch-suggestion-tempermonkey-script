@@ -24,7 +24,7 @@
 
         if (branchName && lastBranchName !== branchName) {
             $('#branch-name-suggestion').remove();
-            $('.gh-header-meta').parent().append(`Branch name suggestion: <input type="text" value="${branchName}" id="branch-name-suggestion" size="100">`);
+            $('.gh-header-meta').parent().append(`Branch name suggestion: <input type="text" value="${branchName}" readonly id="branch-name-suggestion" size="100">`);
             lastBranchName = branchName;
         }
     }, 1000)
