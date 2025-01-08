@@ -31,7 +31,7 @@
                 $('.gh-header-meta').parent().append(`<br>Commit message suggestion: <input type="text" value="fix($actorName): #${issueNumber} - ${issueTitle}" readonly id="branch-name-suggestion" size="100">`);
                 $('.gh-header-meta').parent().append(`<br>DailyBot Report:<br>`
                                                      + `<div><code>`
-                                                     + `<strong>${humanReadableRepository}</strong><br>`
+                                                     + `<strong>${humanReadableRepository}:</strong><br>`
                                                      + `• <a href="${location.href}">#${issueNumber} - ${issueTitle}</a>`
                                                      + `</code></div>`);
                 lastBranchName = branchName;
