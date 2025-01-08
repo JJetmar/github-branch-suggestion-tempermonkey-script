@@ -22,7 +22,7 @@
             const issueNumber = $('.js-issue-title + span').eq(0).text().replace(/[^\d]/g, '');
             const projectPath = $('nav[aria-label="Page context"]').text().replace(/\s+/mg, '');
             const [organization, repository] = projectPath.split('/');
-
+            const humanReadableRepository = repository.substring(0, 1).toUpperCase().concat(repository.substring(1).replace(/-+/g, ' '))
             const branchName = `fix/${issueNumber}-${formattedIssueName}`
 
             if (branchName && lastBranchName !== branchName) {
@@ -31,7 +31,7 @@
                 $('.gh-header-meta').parent().append(`<br>Commit message suggestion: <input type="text" value="fix($actorName): #${issueNumber} - ${issueTitle}" readonly id="branch-name-suggestion" size="100">`);
                 $('.gh-header-meta').parent().append(`<br>DailyBot Report:<br>`
                                                      + `<div><code>`
-                                                     + `<strong>${repository}</strong><br>`
+                                                     + `<strong>${humanReadableRepository}</strong><br>`
                                                      + `• <a href="${location.href}">#${issueNumber} - ${issueTitle}</a>`
                                                      + `</code></div>`);
                 lastBranchName = branchName;
