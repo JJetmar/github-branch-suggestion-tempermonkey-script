@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Github Issue extension
 // @namespace    http://tampermonkey.net/
-// @version      0.6
+// @version      0.7
 // @description  try to take over the world!
 // @author       https://github.com/JJetmar/
 // @match        https://github.com/*
@@ -20,8 +20,8 @@
             const issueTitleElement = $('[data-component="PH_Title"]').eq(0);
             const issueTitle = issueTitleElement.find('*').first().text();
             const formattedIssueName = issueTitle.replace(/[^a-zA-Z\d]+/g, '-').replace(/-/g, '-').replace(/^-+|-+$/g, '').toLocaleLowerCase()
-            const issueNumber = issueTitleElement.find('*').last().text().replace(/[^\d]/g, '');
-            const breadCrumElements = $('[data-target="context-region-crumb.linkElement"]');
+            const issueNumber = $('[class^="HeaderViewer-module__issueNumberText__"]').text().replace(/[^\d]/g, '');
+            const breadCrumElements = $('[class^="HeaderViewer-module__issueNumberText]');
             const organization = breadCrumElements.eq(0).text().trim();
             const repository = breadCrumElements.eq(1).text().trim();
             const humanReadableRepository = repository.substring(0, 1).toUpperCase().concat(repository.substring(1).replace(/-+/g, ' '))
@@ -32,11 +32,6 @@
                 const titleParentElement = issueTitleElement.parent().parent().parent();
                 titleParentElement.append(`Branch name suggestion: <input type="text" value="${branchName}" readonly id="branch-name-suggestion" size="100">`);
                 titleParentElement.append(`<br>Commit message suggestion: <input type="text" value="fix($actorName): #${issueNumber} - ${issueTitle}" readonly id="branch-name-suggestion" size="100">`);
-                titleParentElement.append(`<br>DailyBot Report:<br>`
-                    + `<div><code>`
-                    + `<strong>${humanReadableRepository}:</strong><br>`
-                    + `• <a href="${location.href}">#${issueNumber} - ${issueTitle}</a>`
-                    + `</code></div>`);
                 lastBranchName = branchName;
             }
         }
