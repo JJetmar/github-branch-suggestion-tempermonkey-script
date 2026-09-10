@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Github Issue extension
 // @namespace    http://tampermonkey.net/
-// @version      0.8
+// @version      0.9
 // @description  try to take over the world!
 // @author       https://github.com/JJetmar/
 // @match        https://github.com/*
@@ -23,31 +23,33 @@
         if (/\/issues\//.test(location.href)) {
             const issueTitleElement = $('[data-component="PH_Title"]').eq(0);
 
-            let issueTitle = issueTitleElement.find('*').first().text().trim();
+            let rawIssueTitle = issueTitleElement.find('*').first().text().trim();
+            
+            // Matches bracketed prefixes like "[Login-Resolver] - " or "[Google Security Settings] - "
             const ACTOR_NAME_REGEXP = /^\s*\[([^\]]+)\]\s*-?\s*/;
-            let actorMatch = issueTitle.match(ACTOR_NAME_REGEXP);
+            let actorMatch = rawIssueTitle.match(ACTOR_NAME_REGEXP);
+            
             let rawActorName = actorMatch ? actorMatch[1] : '';
-
-            // Clean actor name for commit scope (e.g., "Google Security Settings" -> "google-security-settings")
             let formattedActorScope = rawActorName ? formatText(rawActorName) : '<actor-name>';
 
-            // Strip the actor prefix from the issue title body
-            let branchSuggestionIssueName = actorMatch ? issueTitle.replace(ACTOR_NAME_REGEXP, '') : issueTitle;
-            const formattedBranchSuggestionIssueName = formatText(branchSuggestionIssueName);
+            // Clean title by stripping the actor prefix
+            let cleanIssueTitle = actorMatch ? rawIssueTitle.replace(ACTOR_NAME_REGEXP, '') : rawIssueTitle;
+
+            // Combine actor prefix + clean title into full slug for the branch name
+            let fullTitleSlug = formatText(rawIssueTitle);
 
             const issueNumber = $('[class^="HeaderViewer-module__issueNumberText__"]').text().replace(/[^\d]/g, '');
-            const branchName = `fix/${issueNumber}-${formattedBranchSuggestionIssueName}`;
+            const branchName = `fix/${issueNumber}-${fullTitleSlug}`;
 
             if (branchName && lastBranchName !== branchName) {
                 $('#branch-name-suggestion, #commit-message-suggestion, br.suggestion-break').remove();
-
+                
                 const titleParentElement = issueTitleElement.parent().parent().parent();
-
-                const commitMessage = `fix(${formattedActorScope}): #${issueNumber} - ${branchSuggestionIssueName}`;
+                const commitMessage = `fix(${formattedActorScope}): #${issueNumber} - ${cleanIssueTitle}`;
 
                 titleParentElement.append(`Branch name suggestion: <input type="text" value="${branchName}" readonly id="branch-name-suggestion" size="100">`);
                 titleParentElement.append(`<br class="suggestion-break">Commit message suggestion: <input type="text" value="${commitMessage}" readonly id="commit-message-suggestion" size="100">`);
-
+                
                 lastBranchName = branchName;
             }
         }
