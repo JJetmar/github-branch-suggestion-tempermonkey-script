@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Github Issue extension
 // @namespace    http://tampermonkey.net/
-// @version      0.9
+// @version      0.10
 // @description  try to take over the world!
 // @author       https://github.com/JJetmar/
 // @match        https://github.com/*
@@ -60,5 +60,5 @@
             unprocessedLink.setAttribute('target', '_blank');
             unprocessedLink.setAttribute('data-gh-extension', 'true');
         }
-    }, 1000);
+    }, 300);
 })();
