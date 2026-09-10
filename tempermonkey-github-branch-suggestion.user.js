@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Github Issue extension
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.8
 // @description  try to take over the world!
 // @author       https://github.com/JJetmar/
 // @match        https://github.com/*
@@ -15,32 +15,48 @@
 
     let lastBranchName;
 
+    function formatText(text) {
+        return text.replace(/[^a-zA-Z\d]+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '').toLowerCase();
+    }
+
     setInterval(() => {
-        if (/\/issues\//.test(location.href)) { // Evaluate only for issues (not PRs for example)
+        if (/\/issues\//.test(location.href)) {
             const issueTitleElement = $('[data-component="PH_Title"]').eq(0);
-            const issueTitle = issueTitleElement.find('*').first().text();
-            const formattedIssueName = issueTitle.replace(/[^a-zA-Z\d]+/g, '-').replace(/-/g, '-').replace(/^-+|-+$/g, '').toLocaleLowerCase()
+
+            let issueTitle = issueTitleElement.find('*').first().text().trim();
+            const ACTOR_NAME_REGEXP = /^\s*\[([^\]]+)\]\s*-?\s*/;
+            let actorMatch = issueTitle.match(ACTOR_NAME_REGEXP);
+            let rawActorName = actorMatch ? actorMatch[1] : '';
+
+            // Clean actor name for commit scope (e.g., "Google Security Settings" -> "google-security-settings")
+            let formattedActorScope = rawActorName ? formatText(rawActorName) : '<actor-name>';
+
+            // Strip the actor prefix from the issue title body
+            let branchSuggestionIssueName = actorMatch ? issueTitle.replace(ACTOR_NAME_REGEXP, '') : issueTitle;
+            const formattedBranchSuggestionIssueName = formatText(branchSuggestionIssueName);
+
             const issueNumber = $('[class^="HeaderViewer-module__issueNumberText__"]').text().replace(/[^\d]/g, '');
-            const breadCrumElements = $('[class^="HeaderViewer-module__issueNumberText]');
-            const organization = breadCrumElements.eq(0).text().trim();
-            const repository = breadCrumElements.eq(1).text().trim();
-            const humanReadableRepository = repository.substring(0, 1).toUpperCase().concat(repository.substring(1).replace(/-+/g, ' '))
-            const branchName = `fix/${issueNumber}-${formattedIssueName}`
+            const branchName = `fix/${issueNumber}-${formattedBranchSuggestionIssueName}`;
 
             if (branchName && lastBranchName !== branchName) {
-                //$('#branch-name-suggestion').remove();
+                $('#branch-name-suggestion, #commit-message-suggestion, br.suggestion-break').remove();
+
                 const titleParentElement = issueTitleElement.parent().parent().parent();
+
+                const commitMessage = `fix(${formattedActorScope}): #${issueNumber} - ${branchSuggestionIssueName}`;
+
                 titleParentElement.append(`Branch name suggestion: <input type="text" value="${branchName}" readonly id="branch-name-suggestion" size="100">`);
-                titleParentElement.append(`<br>Commit message suggestion: <input type="text" value="fix($actorName): #${issueNumber} - ${issueTitle}" readonly id="branch-name-suggestion" size="100">`);
+                titleParentElement.append(`<br class="suggestion-break">Commit message suggestion: <input type="text" value="${commitMessage}" readonly id="commit-message-suggestion" size="100">`);
+
                 lastBranchName = branchName;
             }
         }
 
         // Open all GH external links in new window
-        const unprocessedLinks = [...document.querySelectorAll('a[href*="://"]:not(*[data-gh-extension])')];
+        const unprocessedLinks = [...document.querySelectorAll('a[href*="://"]:not([data-gh-extension])')];
         for (const unprocessedLink of unprocessedLinks) {
             unprocessedLink.setAttribute('target', '_blank');
             unprocessedLink.setAttribute('data-gh-extension', 'true');
         }
-    }, 1000)
+    }, 1000);
 })();
