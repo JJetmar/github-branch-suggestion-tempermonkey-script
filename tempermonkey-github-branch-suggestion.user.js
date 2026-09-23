@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Github Issue extension
 // @namespace    http://tampermonkey.net/
-// @version      0.10
-// @description  try to take over the world!
+// @version      0.11
+// @description  Generates suggestions git branch names and commit messages based on GH Issues title.
 // @author       https://github.com/JJetmar/
 // @match        https://github.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=github.com
@@ -24,16 +24,18 @@
             const issueTitleElement = $('[data-component="PH_Title"]').eq(0);
 
             let rawIssueTitle = issueTitleElement.find('*').first().text().trim();
-            
+
             // Matches bracketed prefixes like "[Login-Resolver] - " or "[Google Security Settings] - "
             const ACTOR_NAME_REGEXP = /^\s*\[([^\]]+)\]\s*-?\s*/;
             let actorMatch = rawIssueTitle.match(ACTOR_NAME_REGEXP);
-            
+
             let rawActorName = actorMatch ? actorMatch[1] : '';
             let formattedActorScope = rawActorName ? formatText(rawActorName) : '<actor-name>';
 
             // Clean title by stripping the actor prefix
-            let cleanIssueTitle = actorMatch ? rawIssueTitle.replace(ACTOR_NAME_REGEXP, '') : rawIssueTitle;
+            let cleanIssueTitle = actorMatch
+                ? rawIssueTitle.replace(ACTOR_NAME_REGEXP, '').replace(/^\W+/, '')
+                : rawIssueTitle;
 
             // Combine actor prefix + clean title into full slug for the branch name
             let fullTitleSlug = formatText(rawIssueTitle);
@@ -43,13 +45,13 @@
 
             if (branchName && lastBranchName !== branchName) {
                 $('#branch-name-suggestion, #commit-message-suggestion, br.suggestion-break').remove();
-                
+
                 const titleParentElement = issueTitleElement.parent().parent().parent();
                 const commitMessage = `fix(${formattedActorScope}): #${issueNumber} - ${cleanIssueTitle}`;
 
                 titleParentElement.append(`Branch name suggestion: <input type="text" value="${branchName}" readonly id="branch-name-suggestion" size="100">`);
                 titleParentElement.append(`<br class="suggestion-break">Commit message suggestion: <input type="text" value="${commitMessage}" readonly id="commit-message-suggestion" size="100">`);
-                
+
                 lastBranchName = branchName;
             }
         }
